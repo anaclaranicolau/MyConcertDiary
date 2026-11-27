@@ -1,18 +1,21 @@
-
 <?php
 require __DIR__ . '/config/conexao.php';
 require __DIR__ . '/config/funcoes.php';
 
-// Busca todos os shows cadastrados
-$shows = $pdo->query(
+exigirLogin();
+
+$consulta = $pdo->prepare(
     'SELECT
         s.*,
         a.nome AS artista
      FROM shows s
      JOIN artistas a
         ON a.id_artista = s.id_artista
+     WHERE s.id_usuario = ?
      ORDER BY s.data_show DESC'
-)->fetchAll();
+);
+$consulta->execute([$_SESSION['admin_id']]);
+$shows = $consulta->fetchAll();
 
 // Define o título da página
 $titulo = 'Linha do tempo | My Concert Diary';

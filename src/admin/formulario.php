@@ -311,17 +311,22 @@
         <!-- GALERIA DE FOTOS -->
         <div class="col-12">
 
-            <label class="form-label">
-                Galeria de fotos (até 20)
+            <label class="form-label" for="fotos-galeria">
+                Galeria de fotos (até 20 por envio)
             </label>
 
             <input
                 class="form-control"
                 type="file"
+                id="fotos-galeria"
                 name="fotos[]"
                 multiple
                 accept="image/jpeg,image/png,image/webp"
+                data-limite-fotos="20"
+                aria-describedby="status-fotos"
             >
+            <p class="form-text mb-0" id="status-fotos" role="status"></p>
+            <ul class="list-unstyled mb-0" id="lista-fotos"></ul>
 
         </div>
 

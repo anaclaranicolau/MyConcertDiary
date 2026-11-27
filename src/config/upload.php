@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -75,12 +74,13 @@ function salvarImagem(array $arq, string $pasta): ?string
         random_bytes(16)
     ) . '.' . $tipos[$mime];
 
-    // Define o caminho de destino
-    $destino = dirname(__DIR__)
-        . '/uploads/'
-        . $pasta
-        . '/'
-        . $nome;
+    $caminho = '/uploads/' . $pasta . '/' . $nome;
+    $destino = caminhoFoto($caminho);
+    $diretorio = dirname($destino);
+
+    if (!is_dir($diretorio) && !@mkdir($diretorio, 0750, true) && !is_dir($diretorio)) {
+        throw new RuntimeException('Não foi possível preparar a pasta de imagens.');
+    }
 
     // Move a imagem para a pasta de destino
     if (
@@ -95,10 +95,7 @@ function salvarImagem(array $arq, string $pasta): ?string
     }
 
     // Retorna o caminho da imagem salva
-    return '/uploads/'
-        . $pasta
-        . '/'
-        . $nome;
+    return $caminho;
 }
 
 

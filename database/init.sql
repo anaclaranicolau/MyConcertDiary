@@ -10,8 +10,7 @@ USE my_concert_diary;
 -- TABELA: USUARIOS
 -- ==========================================
 
--- Armazena os dados dos administradores
--- responsáveis pelo gerenciamento do site.
+-- Armazena as contas do diário.
 
 CREATE TABLE IF NOT EXISTS usuarios (
 
@@ -54,6 +53,8 @@ CREATE TABLE IF NOT EXISTS shows (
 
     id_artista INT NOT NULL,
 
+    id_usuario INT NOT NULL,
+
     turne VARCHAR(150),
 
     data_show DATE NOT NULL,
@@ -73,7 +74,10 @@ CREATE TABLE IF NOT EXISTS shows (
     foto_ingresso VARCHAR(255),
 
     FOREIGN KEY (id_artista)
-        REFERENCES artistas(id_artista)
+        REFERENCES artistas(id_artista),
+
+    CONSTRAINT fk_shows_usuario FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario)
 
 );
 

@@ -361,3 +361,117 @@ a {
     }
 
 }
+
+
+.painel.painel-diario {
+    padding: 1rem 1.25rem;
+    overflow-wrap: anywhere;
+}
+
+.painel-diario p:last-child {
+    margin-bottom: 0;
+}
+
+.foto-galeria {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: zoom-in;
+}
+
+.foto-galeria .mini-foto {
+    display: block;
+    transition: transform 240ms ease, filter 240ms ease;
+}
+
+.foto-galeria-acao {
+    position: absolute;
+    right: .75rem;
+    bottom: .75rem;
+    padding: .4rem .8rem;
+    border-radius: 999px;
+    background: var(--creme);
+    color: var(--texto);
+    box-shadow: 0 2px 12px #0003;
+    font-size: .875rem;
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(.35rem);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.foto-galeria:is(:hover, :focus-visible) .mini-foto {
+    transform: scale(1.05);
+    filter: brightness(.82);
+}
+
+.foto-galeria:is(:hover, :focus-visible) .foto-galeria-acao {
+    opacity: 1;
+    transform: none;
+}
+
+.foto-galeria:focus-visible {
+    outline: 3px solid var(--destaque);
+    outline-offset: 3px;
+}
+
+@media (hover: none) {
+    .foto-galeria-acao {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .foto-galeria .mini-foto,
+    .foto-galeria-acao {
+        transition: none;
+    }
+
+    .foto-galeria:is(:hover, :focus-visible) .mini-foto {
+        transform: none;
+    }
+}
+
+.visualizador-fotos {
+    width: min(960px, calc(100% - 1.5rem));
+    max-height: calc(100dvh - 1.5rem);
+    padding: .75rem;
+    border: 0;
+    border-radius: 14px;
+    background: #171e29;
+    color: white;
+}
+
+.visualizador-fotos::backdrop {
+    background: rgb(0 0 0 / 78%);
+}
+
+.visualizador-fotos img {
+    display: block;
+    width: 100%;
+    height: min(70dvh, calc(100dvh - 9rem));
+    object-fit: contain;
+    margin-block: .5rem;
+}
+
+.visualizador-barra,
+.visualizador-controles {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.visualizador-fotos button {
+    padding: .35rem .75rem;
+    border: 1px solid #aab5c3;
+    border-radius: .5rem;
+    background: transparent;
+    color: inherit;
+}
+
+.visualizador-fotos button:disabled {
+    opacity: .5;
+}

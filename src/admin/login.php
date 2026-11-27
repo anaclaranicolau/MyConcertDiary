@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -105,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // ==========================================
 
 // Define o título da página
-$titulo = 'Entrar | Administração';
+$titulo = 'Entrar | My Concert Diary';
 
 // Inclui o cabeçalho
 include __DIR__ . '/../includes/header.php';
@@ -119,7 +118,7 @@ include __DIR__ . '/../includes/header.php';
 
         <!-- TÍTULO -->
         <h1>
-            Área administrativa ♡
+            Área de login ♡
         </h1>
 
         <!-- MENSAGEM DE ERRO -->
@@ -174,6 +173,8 @@ include __DIR__ . '/../includes/header.php';
             </button>
 
         </form>
+
+        <p class="mt-3 mb-0"><a href="/admin/criar-conta.php">Criar conta</a></p>
 
     </div>
 

@@ -1,13 +1,14 @@
-
 <?php
 require __DIR__ . '/config/conexao.php';
 require __DIR__ . '/config/funcoes.php';
+
+exigirLogin();
 
 // Recebe o ID do show pela URL
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 // Busca as informações do show
-$s = $id ? buscarShow($pdo, $id) : false;
+$s = $id ? buscarShow($pdo, $id, (int) $_SESSION['admin_id']) : false;
 
 // Verifica se o show existe
 if (!$s) {
@@ -60,7 +61,7 @@ include __DIR__ . '/includes/header.php';
 
         <img
             class="foto-grande mb-5"
-            src="<?= e($s['foto_capa']) ?>"
+            src="<?= e(urlFoto($id, $s['foto_capa'])) ?>"
             alt="Foto do show"
         >
 
@@ -130,12 +131,7 @@ include __DIR__ . '/includes/header.php';
 
         <h2>Minha experiência</h2>
 
-        <div class="painel texto-diario">
-            <?= e(
-                $s['relato']
-                ?: 'Esta memória ainda está sendo escrita... ♡'
-            ) ?>
-        </div>
+        <div class="painel painel-diario texto-diario"><?= e($s['relato'] ?: 'Esta memória ainda está sendo escrita... ♡') ?></div>
 
     </section>
 
@@ -144,7 +140,7 @@ include __DIR__ . '/includes/header.php';
 
         <!-- MÚSICA FAVORITA -->
         <div class="col-md-6">
-            <div class="painel h-100">
+            <div class="painel painel-diario h-100">
 
                 <h3>🎵 Música favorita</h3>
 
@@ -160,16 +156,11 @@ include __DIR__ . '/includes/header.php';
 
         <!-- MOMENTO MARCANTE -->
         <div class="col-md-6">
-            <div class="painel h-100">
+            <div class="painel painel-diario h-100">
 
                 <h3>💗 Momento marcante</h3>
 
-                <p class="texto-diario">
-                    <?= e(
-                        $s['momento_marcante']
-                        ?: 'Ainda não registrado'
-                    ) ?>
-                </p>
+                <p class="texto-diario"><?= e($s['momento_marcante'] ?: 'Ainda não registrado') ?></p>
 
             </div>
         </div>
@@ -221,13 +212,13 @@ include __DIR__ . '/includes/header.php';
                     <?php if ($m['tipo'] === 'foto'): ?>
 
                         <!-- FOTO -->
-                        <img
-                            class="mini-foto"
-                            src="<?= e($m['caminho_arquivo']) ?>"
-                            alt="<?= e(
-                                $m['legenda'] ?: 'Foto do show'
-                            ) ?>"
-                        >
+                        <?php $url = e(urlFoto($id, $m['caminho_arquivo'])); ?>
+                        <a class="foto-galeria" href="<?= $url ?>" data-foto-galeria
+                           aria-label="Ampliar <?= e($m['legenda'] ?: 'foto do show') ?>">
+                            <img class="mini-foto" src="<?= $url ?>"
+                                 alt="<?= e($m['legenda'] ?: 'Foto do show') ?>">
+                            <span class="foto-galeria-acao" aria-hidden="true">Ampliar foto</span>
+                        </a>
 
                     <?php else: ?>
 
@@ -257,6 +248,20 @@ include __DIR__ . '/includes/header.php';
 
         </div>
 
+        <?php if (in_array('foto', array_column($midias, 'tipo'), true)): ?>
+            <dialog class="visualizador-fotos" id="visualizador-fotos" aria-label="Galeria de fotos">
+                <div class="visualizador-barra">
+                    <span data-foto-posicao role="status"></span>
+                    <button type="button" data-foto-fechar aria-label="Fechar galeria" autofocus>×</button>
+                </div>
+                <img data-foto-ampliada alt="">
+                <div class="visualizador-controles">
+                    <button type="button" data-foto-anterior>← Anterior</button>
+                    <button type="button" data-foto-proxima>Próxima →</button>
+                </div>
+            </dialog>
+        <?php endif; ?>
+
         <!-- GALERIA VAZIA -->
         <?php if (!$midias): ?>
 
@@ -277,32 +282,22 @@ include __DIR__ . '/includes/header.php';
 
             <!-- ACOMPANHANTES -->
             <div class="col-md-6">
-                <div class="painel h-100">
+                <div class="painel painel-diario h-100">
 
                     <h3>Com quem fui</h3>
 
-                    <p class="texto-diario">
-                        <?= e(
-                            $s['acompanhantes']
-                            ?: 'Não informado'
-                        ) ?>
-                    </p>
+                    <p class="texto-diario"><?= e($s['acompanhantes'] ?: 'Não informado') ?></p>
 
                 </div>
             </div>
 
             <!-- LOOK -->
             <div class="col-md-6">
-                <div class="painel h-100">
+                <div class="painel painel-diario h-100">
 
                     <h3>Meu look</h3>
 
-                    <p class="texto-diario">
-                        <?= e(
-                            $s['look_descricao']
-                            ?: 'Não registrado'
-                        ) ?>
-                    </p>
+                    <p class="texto-diario"><?= e($s['look_descricao'] ?: 'Não registrado') ?></p>
 
                 </div>
             </div>
@@ -319,7 +314,7 @@ include __DIR__ . '/includes/header.php';
                 <img
                     class="img-fluid foto-grande"
                     style="max-width: 500px"
-                    src="<?= e($s['foto_ingresso']) ?>"
+                    src="<?= e(urlFoto($id, $s['foto_ingresso'])) ?>"
                     alt="Ingresso do show"
                 >
 

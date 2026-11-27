@@ -1,7 +1,8 @@
-
 <?php
 require __DIR__ . '/config/conexao.php';
 require __DIR__ . '/config/funcoes.php';
+
+exigirLogin();
 
 // Recebe os filtros de pesquisa
 $busca = trim($_GET['busca'] ?? '');
@@ -14,9 +15,9 @@ $sql = 'SELECT
         FROM shows s
         JOIN artistas a
             ON a.id_artista = s.id_artista
-        WHERE 1=1';
+        WHERE s.id_usuario = ?';
 
-$args = [];
+$args = [$_SESSION['admin_id']];
 
 // Filtro por artista ou turnê
 if ($busca !== '') {
@@ -131,7 +132,7 @@ include __DIR__ . '/includes/header.php';
 
                         <img
                             class="capa"
-                            src="<?= e($s['foto_capa']) ?>"
+                            src="<?= e(urlFoto($s['id_show'], $s['foto_capa'])) ?>"
                             alt="Foto de <?= e($s['artista']) ?>"
                         >
 
