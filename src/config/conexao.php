@@ -1,4 +1,3 @@
-
 <?php
 
 // Cria a conexão com o banco de dados MySQL

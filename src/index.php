@@ -1,19 +1,26 @@
-
 <?php
 require __DIR__ . '/config/conexao.php';
 require __DIR__ . '/config/funcoes.php';
 
-$total = (int) $pdo->query(
-    'SELECT COUNT(*) FROM shows'
-)->fetchColumn();
+iniciarSessao();
+$usuarioId = (int) ($_SESSION['admin_id'] ?? 0);
 
-$shows = $pdo->query(
-    'SELECT s.*, a.nome AS artista
-     FROM shows s
-     JOIN artistas a ON a.id_artista = s.id_artista
-     ORDER BY s.data_show DESC
-     LIMIT 3'
-)->fetchAll();
+if ($usuarioId) {
+    $consulta = $pdo->prepare('SELECT COUNT(*) FROM shows WHERE id_usuario = ?');
+    $consulta->execute([$usuarioId]);
+    $total = (int) $consulta->fetchColumn();
+
+    $consulta = $pdo->prepare(
+        'SELECT s.*, a.nome AS artista
+         FROM shows s
+         JOIN artistas a ON a.id_artista = s.id_artista
+         WHERE s.id_usuario = ?
+         ORDER BY s.data_show DESC
+         LIMIT 3'
+    );
+    $consulta->execute([$usuarioId]);
+    $shows = $consulta->fetchAll();
+}
 
 $titulo = 'Início | My Concert Diary';
 
@@ -39,13 +46,17 @@ include __DIR__ . '/includes/header.php';
             e noites inesquecíveis.
         </p>
 
-        <a class="botao mt-3" href="/shows.php">
-            Explorar minhas memórias ♡
-        </a>
+        <?php if ($usuarioId): ?>
+            <a class="botao mt-3" href="/shows.php">Explorar minhas memórias ♡</a>
+        <?php else: ?>
+            <a class="botao mt-3" href="/admin/criar-conta.php">Criar conta</a>
+            <a class="botao botao-rosa mt-3" href="/admin/login.php">Entrar</a>
+        <?php endif; ?>
 
     </div>
 </section>
 
+<?php if ($usuarioId): ?>
 <!-- MINHA COLEÇÃO -->
 <section class="secao">
     <div class="container text-center">
@@ -59,9 +70,11 @@ include __DIR__ . '/includes/header.php';
         </h2>
 
         <p class="subtitulo">
-            Já são <?= $total ?>
-            <?= $total === 1 ? 'show registrado' : 'shows registrados' ?>
-            neste diário.
+            <?= match ($total) {
+                0 => 'Ainda não há shows registrados neste diário.',
+                1 => 'Já tem 1 show registrado neste diário.',
+                default => "Já são {$total} shows registrados neste diário."
+            } ?>
         </p>
 
     </div>
@@ -87,7 +100,7 @@ include __DIR__ . '/includes/header.php';
 
                             <img
                                 class="capa"
-                                src="<?= e($s['foto_capa']) ?>"
+                                src="<?= e(urlFoto($s['id_show'], $s['foto_capa'])) ?>"
                                 alt="Show de <?= e($s['artista']) ?>"
                             >
 
@@ -143,6 +156,7 @@ include __DIR__ . '/includes/header.php';
 
     </div>
 </section>
+<?php endif; ?>
 
 <?php
 include __DIR__ . '/includes/footer.php';

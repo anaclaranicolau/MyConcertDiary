@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -14,7 +13,7 @@ require_once __DIR__ . '/../config/upload.php';
 // ==========================================
 
 // Processamento compartilhado entre criação e edição
-function salvarShow(PDO $pdo, ?int $id): int
+function salvarShow(PDO $pdo, int $usuarioId, ?int $id): int
 {
 
     // ==========================================
@@ -255,7 +254,7 @@ function salvarShow(PDO $pdo, ?int $id): int
         if ($id) {
 
             // Recupera o show anterior
-            $anterior = buscarShow($pdo, $id);
+            $anterior = buscarShow($pdo, $id, $usuarioId);
 
             // Verifica se o show existe
             if (!$anterior) {
@@ -278,7 +277,7 @@ function salvarShow(PDO $pdo, ?int $id): int
                     setor = ?,
                     acompanhantes = ?,
                     look_descricao = ?
-                 WHERE id_show = ?'
+                 WHERE id_show = ? AND id_usuario = ?'
             );
 
             $q->execute([
@@ -290,7 +289,8 @@ function salvarShow(PDO $pdo, ?int $id): int
                 $setor ?: null,
                 $acompanhantes ?: null,
                 $look ?: null,
-                $id
+                $id,
+                $usuarioId
             ]);
 
         } else {
@@ -301,6 +301,7 @@ function salvarShow(PDO $pdo, ?int $id): int
 
             $q = $pdo->prepare(
                 'INSERT INTO shows (
+                    id_usuario,
                     id_artista,
                     turne,
                     data_show,
@@ -310,10 +311,11 @@ function salvarShow(PDO $pdo, ?int $id): int
                     acompanhantes,
                     look_descricao
                  )
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
             );
 
             $q->execute([
+                $usuarioId,
                 $artistaId,
                 $turne ?: null,
                 $data,

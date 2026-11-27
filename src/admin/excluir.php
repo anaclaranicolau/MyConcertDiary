@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -68,7 +67,8 @@ if (!$id) {
 // ==========================================
 
 // Recupera as informações do show
-$s = buscarShow($pdo, $id);
+$usuarioId = (int) $_SESSION['admin_id'];
+$s = buscarShow($pdo, $id, $usuarioId);
 
 // Verifica se o show existe
 if (!$s) {
@@ -108,11 +108,11 @@ foreach (imagensDoShow($pdo, $id) as $m) {
 
 // Prepara a consulta de exclusão
 $q = $pdo->prepare(
-    'DELETE FROM shows WHERE id_show = ?'
+    'DELETE FROM shows WHERE id_show = ? AND id_usuario = ?'
 );
 
 // Executa a exclusão
-$q->execute([$id]);
+$q->execute([$id, $usuarioId]);
 
 
 // ==========================================

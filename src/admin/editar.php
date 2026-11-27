@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -36,7 +35,7 @@ $id = filter_input(
 
 // Busca as informações do show
 $s = $id
-    ? buscarShow($pdo, $id)
+    ? buscarShow($pdo, $id, (int) $_SESSION['admin_id'])
     : false;
 
 // Verifica se o show existe
@@ -90,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
 
         // Salva as alterações do show
-        salvarShow($pdo, $id);
+        salvarShow($pdo, (int) $_SESSION['admin_id'], $id);
 
         // Redireciona para a página do show atualizado
         header('Location: /show.php?id=' . $id);

@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -24,16 +23,19 @@ exigirLogin();
 // CONSULTA DOS SHOWS CADASTRADOS
 // ==========================================
 
-// Busca todos os shows e seus respectivos artistas
-$shows = $pdo->query(
+// Busca os shows da conta conectada e seus respectivos artistas
+$consulta = $pdo->prepare(
     'SELECT
         s.*,
         a.nome AS artista
      FROM shows s
      JOIN artistas a
         ON a.id_artista = s.id_artista
+     WHERE s.id_usuario = ?
      ORDER BY s.data_show DESC'
-)->fetchAll();
+);
+$consulta->execute([$_SESSION['admin_id']]);
+$shows = $consulta->fetchAll();
 
 
 // ==========================================
@@ -41,7 +43,7 @@ $shows = $pdo->query(
 // ==========================================
 
 // Define o título da página
-$titulo = 'Painel administrativo';
+$titulo = 'Meu diário';
 
 // Inclui o cabeçalho
 include __DIR__ . '/../includes/header.php';
@@ -61,7 +63,7 @@ include __DIR__ . '/../includes/header.php';
             </p>
 
             <h1>
-                Painel administrativo
+                Meu diário
             </h1>
 
         </div>

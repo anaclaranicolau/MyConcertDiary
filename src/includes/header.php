@@ -83,12 +83,12 @@
                         Sobre mim
                     </a>
 
-                    <!-- ADMINISTRAÇÃO -->
+                    <!-- DIÁRIO -->
                     <a
                         class="nav-link"
                         href="/admin/dashboard.php"
                     >
-                        Administração
+                        Meu diário
                     </a>
 
                 </div>

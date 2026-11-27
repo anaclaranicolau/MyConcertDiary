@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -102,7 +101,7 @@ function dataBR($d): string
 // ==========================================
 
 // Busca as informações completas de um show
-function buscarShow(PDO $pdo, int $id): array|false
+function buscarShow(PDO $pdo, int $id, int $usuarioId): array|false
 {
     $q = $pdo->prepare(
         'SELECT
@@ -117,10 +116,10 @@ function buscarShow(PDO $pdo, int $id): array|false
             ON a.id_artista = s.id_artista
          LEFT JOIN memorias m
             ON m.id_show = s.id_show
-         WHERE s.id_show = ?'
+         WHERE s.id_show = ? AND s.id_usuario = ?'
     );
 
-    $q->execute([$id]);
+    $q->execute([$id, $usuarioId]);
 
     return $q->fetch();
 }
@@ -170,25 +169,24 @@ function musicasDoShow(PDO $pdo, int $id): array
 // GERENCIAMENTO DE ARQUIVOS
 // ==========================================
 
-// Remove um arquivo de imagem armazenado no servidor
-function removerArquivo(?string $caminho): void
+function caminhoFoto(string $referencia): ?string
 {
-    // Verifica se o caminho é válido e permitido
-    if (
-        !$caminho ||
-        !preg_match(
-            '~^/uploads/(capas|ingressos|fotos)/[a-f0-9]{32}\.(jpg|png|webp)$~',
-            $caminho
-        )
-    ) {
-        return;
+    if (!preg_match('~^/uploads/(capas|ingressos|fotos)/[a-f0-9]{32}\.(jpg|png|webp)$~D', $referencia)) {
+        return null;
     }
 
-    // Monta o caminho completo do arquivo
-    $arquivo = dirname(__DIR__) . $caminho;
+    return dirname(__DIR__, 2) . '/storage' . $referencia;
+}
 
-    // Remove o arquivo caso ele exista
-    if (is_file($arquivo)) {
+function urlFoto(int $showId, string $referencia): string
+{
+    return '/foto.php?id=' . $showId . '&arquivo=' . rawurlencode($referencia);
+}
+
+function removerArquivo(?string $caminho): void
+{
+    $arquivo = caminhoFoto($caminho ?? '');
+    if ($arquivo !== null && is_file($arquivo)) {
         unlink($arquivo);
     }
 }

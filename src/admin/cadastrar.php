@@ -1,4 +1,3 @@
-
 <?php
 
 // ==========================================
@@ -50,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
 
         // Salva o novo show no banco de dados
-        $id = salvarShow($pdo, null);
+        $id = salvarShow($pdo, (int) $_SESSION['admin_id'], null);
 
         // Redireciona para a página do show cadastrado
         header('Location: /show.php?id=' . $id);
